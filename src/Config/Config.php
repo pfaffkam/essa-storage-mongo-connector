@@ -40,7 +40,7 @@ class Config extends ExtensionConfig
         $services = $container->services();
 
         // Register MongoDatabase service
-        $services->set('pfaff_essa.mongodb.database', MongoDatabase::class)
+        $services->set(MongoDatabase::class)
             ->public()
             ->args([
                 '$connectionString' => $config['mongo_url'] ?? '',
@@ -48,8 +48,5 @@ class Config extends ExtensionConfig
             ])
             ->autowire();
 
-        // Alias for autowiring
-        $services->alias(MongoDatabase::class, 'pfaff_essa.mongodb.database')
-            ->public();
     }
 }

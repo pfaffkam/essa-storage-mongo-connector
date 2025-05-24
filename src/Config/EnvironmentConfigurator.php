@@ -56,6 +56,6 @@ final readonly class EnvironmentConfigurator implements Configurator
 
     private function isMongoEnvironmentVariablesExists(): bool
     {
-        return getenv('MONGODB_URL') && getenv('MONGODB_DBNAME');
+        return isset($_ENV['MONGODB_URL']) && isset($_ENV['MONGODB_DBNAME']);
     }
 }
