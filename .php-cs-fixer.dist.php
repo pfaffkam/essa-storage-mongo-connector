@@ -1,11 +1,11 @@
 <?php
 
-$finder = (new PhpCsFixer\Finder())
+$finder = new PhpCsFixer\Finder()
     ->in(__DIR__)
     ->exclude([])
 ;
 
-return (new PhpCsFixer\Config())
+return new PhpCsFixer\Config()
     ->setRules([
         '@Symfony' => true,
         'no_null_property_initialization' => false,
@@ -13,4 +13,4 @@ return (new PhpCsFixer\Config())
         'trailing_comma_in_multiline' => ['elements' => ['arrays', 'parameters']],
     ])
     ->setFinder($finder)
-    ;
+;
