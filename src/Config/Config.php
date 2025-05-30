@@ -47,6 +47,5 @@ class Config extends ExtensionConfig
                 '$databaseName' => $config['mongo_db_name'] ?? '',
             ])
             ->autowire();
-
     }
 }

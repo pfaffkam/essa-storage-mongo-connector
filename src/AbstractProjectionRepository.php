@@ -16,7 +16,7 @@ abstract class AbstractProjectionRepository implements ProjectionRepository
         private readonly MongoDatabase $database,
         private readonly ProjectionSerializer $projectionSerializer,
     ) {
-        $this->collection = $database->selectCollection(static::getProjectionClass());
+        $this->collection = $database->selectCollection(static::getProjectionClass()::getProjectionName());
     }
 
     public function save(Projection $projection): void
