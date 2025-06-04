@@ -1,0 +1,24 @@
+name: Master CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tag_version:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Tag version
+        uses: pfaffkam/essa/.github/actions/tag@master
+        with:
+          release_type: minor
