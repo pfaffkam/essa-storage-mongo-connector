@@ -8,6 +8,9 @@ use PfaffKIT\Essa\EventSourcing\Projection\ProjectionRepository;
 use PfaffKIT\Essa\EventSourcing\Serializer\ProjectionSerializer;
 use PfaffKIT\Essa\Shared\Identity;
 
+/**
+ * @template T of Projection
+ */
 abstract class AbstractProjectionRepository implements ProjectionRepository
 {
     private MongoCollection $collection;
@@ -19,6 +22,9 @@ abstract class AbstractProjectionRepository implements ProjectionRepository
         $this->collection = $database->selectCollection(static::getProjectionClass()::getProjectionName());
     }
 
+    /**
+     * @param T $projection
+     */
     public function save(Projection $projection): void
     {
         $expectedType = static::getProjectionClass();
@@ -35,21 +41,30 @@ abstract class AbstractProjectionRepository implements ProjectionRepository
         );
     }
 
+    /**
+     * @returns T|null
+     */
     public function getById(Identity $id): ?Projection
     {
         $data = $this->collection->findOne(['_id' => (string) $id]);
 
-        return $data ? $this->projectionSerializer->denormalize($data) : null;
+        return $data ? $this->denormalizeDocument($data) : null;
     }
 
+    /**
+     * @returns T[]
+     */
     public function findBy(array $criteria): array
     {
         return array_map(
-            fn (array $data) => $this->denormalizeDocument($data),
+            fn ($data) => $this->denormalizeDocument($data),
             $this->collection->find($this->normalizeCriteria($criteria))->toArray()
         );
     }
 
+    /**
+     * @returns T|null
+     */
     public function findOneBy(array $criteria): ?Projection
     {
         return $this->collection->findOne($this->normalizeCriteria($criteria))
@@ -62,6 +77,9 @@ abstract class AbstractProjectionRepository implements ProjectionRepository
         return $this->collection->deleteMany($this->normalizeCriteria($criteria))->getDeletedCount();
     }
 
+    /**
+     * @returns T
+     */
     private function denormalizeDocument($data): Projection
     {
         if (!($data instanceof \stdClass) && !($data instanceof \MongoDB\Model\BSONDocument)) {
@@ -93,4 +111,9 @@ abstract class AbstractProjectionRepository implements ProjectionRepository
 
         return $normalized;
     }
+
+    /**
+     * @returns class-string<T>
+     */
+    abstract public static function getProjectionClass(): string;
 }
