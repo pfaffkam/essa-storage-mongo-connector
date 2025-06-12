@@ -1,6 +1,5 @@
 {
     "name": "pfaffkit/essa-storage-mongo-connector",
-    "version": "1.0.0",
     "description": "Mongo connector for ESSA",
     "type": "library",
     "license": "MIT",
