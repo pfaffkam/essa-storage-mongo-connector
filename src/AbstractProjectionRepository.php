@@ -3,6 +3,8 @@
 namespace PfaffKIT\Essa\Adapters\StorageMongo;
 
 use MongoDB\Collection as MongoCollection;
+use MongoDB\Model\BSONArray as MongoBSONArray;
+use MongoDB\Model\BSONDocument as MongoBSONDocument;
 use PfaffKIT\Essa\EventSourcing\Projection\Projection;
 use PfaffKIT\Essa\EventSourcing\Projection\ProjectionRepository;
 use PfaffKIT\Essa\EventSourcing\Serializer\ProjectionSerializer;
@@ -82,11 +84,11 @@ abstract class AbstractProjectionRepository implements ProjectionRepository
      */
     private function denormalizeDocument($data): Projection
     {
-        if (!($data instanceof \stdClass) && !($data instanceof \MongoDB\Model\BSONDocument)) {
+        if (!($data instanceof \stdClass) && !($data instanceof MongoBSONDocument)) {
             throw new \InvalidArgumentException('Expected stdClass or BSONDocument, got '.(is_object($data) ? get_class($data) : gettype($data)));
         }
 
-        $dataArray = (array) $data;
+        $dataArray = $this->bsonToArray($data);
         if (isset($data->_id)) {
             $dataArray['id'] = (string) $data->_id;
         }
@@ -110,6 +112,28 @@ abstract class AbstractProjectionRepository implements ProjectionRepository
         }
 
         return $normalized;
+    }
+
+    /**
+     * Recursively convert BSONDocument/BSONArray to plain PHP arrays/stdClass.
+     */
+    private function bsonToArray($value)
+    {
+        if ($value instanceof MongoBSONDocument) {
+            $value = (array) $value;
+        }
+
+        if ($value instanceof MongoBSONArray) {
+            $value = $value->getArrayCopy();
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                $value[$k] = $this->bsonToArray($v);
+            }
+        }
+
+        return $value;
     }
 
     /**
