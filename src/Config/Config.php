@@ -48,4 +48,6 @@ class Config extends ExtensionConfig
             ])
             ->autowire();
     }
+
+    public static function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void {}
 }
