@@ -15,7 +15,7 @@ use PfaffKIT\Essa\Shared\Identity;
  */
 abstract class AbstractProjectionRepository implements ProjectionRepository
 {
-    private MongoCollection $collection;
+    protected MongoCollection $collection;
 
     public function __construct(
         private readonly MongoDatabase $database,
@@ -89,6 +89,7 @@ abstract class AbstractProjectionRepository implements ProjectionRepository
         }
 
         $dataArray = $this->bsonToArray($data);
+
         if (isset($data->_id)) {
             $dataArray['id'] = (string) $data->_id;
         }
